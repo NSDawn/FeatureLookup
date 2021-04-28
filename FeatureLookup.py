@@ -105,7 +105,6 @@ features = [
 "high", "low", "front", "back", "tense",
 ]
 
-
 # - - - - - - - - - - - - - - - - - - - 
 
 # fn that converts the string data declared into referenceable dictionaries
@@ -134,11 +133,12 @@ def init() :
 
 # fn main
 def main() :
+    set = {}
     init()
     
     on = True
     while on :
-        cmd = input("\n> ").strip().split(" ")
+        cmd = input("\033[1m\n>> \033[0m").strip().split(" ")
 
         if cmd[0] == "end" :
             print("FeatureLookup.py terminated.\n")
@@ -146,7 +146,7 @@ def main() :
         elif cmd[0] == "help" :
             print("This program is a translation of the PHONOLOGICAL FEATURES CHART (vers. 2015-2, based on Hayes 2009), for ease of use.")
             print("- - - - - - - - -")
-            print("This program includes 4 functions, as follows:\n")
+            print("This program includes 4 basic functions, as follows:\n")
             print("The <list> function lists all items of a given type.\nUsage: list\n       list <phoneme>\n       list <feature> <+/-/0>\n")
             print("The <compare> function lists the similar features of two phonemes. \nUsage: compare <phoneme1> <phomeme2>\n")
             print("The <contrast> function lists the different features of two phonemes. \nUsage: contrast <phoneme1> <phomeme2>\n")
@@ -154,7 +154,14 @@ def main() :
             print("- - - - - - - - -")
             print("This program covers the basic phonemes provided by the chart, and does not include diacritics.")
             print("Type <list> for a list of all phonemes in this program's dictionary.")
-        elif cmd[0] == "list" : 
+            print("Type <advanced> for more advanced functionality.")
+        elif cmd[0] == "advanced" :
+            print("The <set> function allows the user to hold a certain subset of phonemes.")
+            print("Simply typing <set> will print the current set.")
+            print("Phonemes can be added or deleted from the set.")
+            print("The set can also be filtered to only phonemes of a specific feature.")
+            print("Usage: set\n       set clear\n       set add <phoneme>\n       set add <feature> <+/-/0>\n       set add all\n       set delete <phoneme>\n       set delete <feature> <+/-/0>\n       set filter <feature> <+/-/0>")
+        elif cmd[0] in ["list", "l"] : 
             if len(cmd) == 1 :
                 i = 0
                 for entry in data :
@@ -220,6 +227,110 @@ def main() :
                     print("Usage: contrast <phoneme1> <phomeme2>")
             else : 
                 print("Usage: contrast <phoneme1> <phomeme2>")
+        elif cmd[0] in ["set", "s"] :
+            f = True
+            if len(cmd) == 1 :
+                pass
+            elif len(cmd) == 2 :
+                if cmd[1] == "clear" :
+                    set = {}
+                    print("Set cleared.")
+                    f = False
+                else : 
+                    f = False
+                    print("Usage: set\n       set clear\n       set add <phoneme>\n       set add <feature> <+/-/0>\n       set add all\n       set delete <phoneme>\n       set delete <feature> <+/-/0>\n       set filter <feature> <+/-/0>")
+            elif len(cmd) == 3 :
+                if cmd[1] == "add" :
+                    if cmd[2] == "all" :
+                        for entry in data :
+                            set[entry] = data[entry]
+                    elif cmd[2] in data :
+                        set[cmd[2]] = data[cmd[2]]
+                    else :
+                        f = False
+                        print("Feature value must be specified as +, -, or 0." if cmd[2] in features else "Phoneme <" + cmd[1] + "> not found.")
+                        print("Usage: set\n       set clear\n       set add <phoneme>\n       set add <feature> <+/-/0>\n       set add all\n       set delete <phoneme>\n       set delete <feature> <+/-/0>\n       set filter <feature> <+/-/0>")
+                elif cmd[1] in ["delete", "del"] :
+                    if cmd[2] == "all" :
+                        set = {}
+                    elif cmd[2] in set :
+                        del set[cmd[2]]
+                    elif cmd[2] in data :
+                        f = False
+                        print("Phoneme <" + cmd[2] + "> not in set.")
+                    else : 
+                        f = False
+                        print("Usage: set\n       set clear\n       set add <phoneme>\n       set add <feature> <+/-/0>\n       set add all\n       set delete <phoneme>\n       set delete <feature> <+/-/0>\n       set filter <feature> <+/-/0>")
+                else : 
+                    f = False
+                    print("Usage: set\n       set clear\n       set add <phoneme>\n       set add <feature> <+/-/0>\n       set add all\n       set delete <phoneme>\n       set delete <feature> <+/-/0>\n       set filter <feature> <+/-/0>")
+            elif len(cmd) == 4 :
+                if cmd[1] == "add" :
+                    if cmd[2] in features :
+                        if cmd[3] in ["+", "-", "0"] :
+                            for entry in data :
+                                if data[entry][cmd[2]] == cmd[3] :
+                                    set[entry] = data[entry]
+                        else : 
+                            f = False
+                            print("Feature value must be +, -, or 0.")
+                            print("Usage: set\n       set clear\n       set add <phoneme>\n       set add <feature> <+/-/0>\n       set add all\n       set delete <phoneme>\n       set delete <feature> <+/-/0>\n       set filter <feature> <+/-/0>")
+                    else :
+                        print("Feature <" + cmd[2] + "> not found.")
+                        f = False
+                elif cmd[1] in ["delete", "del"] :
+                    if cmd[2] in features :
+                        if cmd[3] in ["+", "-", "0"] :
+                            delete_entries = []
+                            for entry in set :
+                                if set[entry][cmd[2]] == cmd[3] :
+                                    delete_entries.append(entry)
+                            if len(delete_entries) != 0 :
+                                for entry in delete_entries :
+                                    del set[entry]
+                            else :
+                                print("No entries deleted.")                                
+                        else : 
+                            f = False
+                            print("Feature value must be +, -, or 0.")
+                            print("Usage: set\n       set clear\n       set add <phoneme>\n       set add <feature> <+/-/0>\n       set add all\n       set delete <phoneme>\n       set delete <feature> <+/-/0>\n       set filter <feature> <+/-/0>")
+                    else :
+                        print("Feature <" + cmd[2] + "> not found.")
+                        f = False
+                elif cmd[1] == "filter" :
+                    if cmd[2] in features :
+                        if cmd[3] in ["+", "-", "0"] :
+                            delete_entries = []
+                            for entry in set :
+                                if set[entry][cmd[2]] != cmd[3] :
+                                    delete_entries.append(entry)
+                            if len(delete_entries) != 0 :
+                                for entry in delete_entries :
+                                    del set[entry]
+                            else :
+                                print("No entries filtered.")                                
+                        else : 
+                            f = False
+                            print("Feature value must be +, -, or 0.")
+                            print("Usage: set\n       set clear\n       set add <phoneme>\n       set add <feature> <+/-/0>\n       set add all\n       set delete <phoneme>\n       set delete <feature> <+/-/0>\n       set filter <feature> <+/-/0>")
+                    else :
+                        print("Feature <" + cmd[2] + "> not found.")
+                        f = False
+            else : 
+                f = False
+                print("Usage: set\n       set clear\n       set add <phoneme>\n       set add <feature> <+/-/0>\n       set add all\n       set delete <phoneme>\n       set delete <feature> <+/-/0>\n       set filter <feature> <+/-/0>")
+
+
+            if f :
+                if len(set) != 0 :
+                    i = 0
+                    for entry in set :
+                        i += 1
+                        print("{0:<4}".format(entry), end = (" " if i % 8 != 0 else "\n"))
+                    if i % 8 != 0 :
+                        print("")
+                else :
+                    print("Set is empty. Enter <set add all> to add all phonemes.")
         elif cmd[0] == "" : 
             pass
         else :
@@ -229,3 +340,4 @@ def main() :
 
 if __name__ == '__main__' :
     main()
+
