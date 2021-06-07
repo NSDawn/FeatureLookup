@@ -148,7 +148,7 @@ def main() :
             print("- - - - - - - - -")
             print("This program includes 4 basic functions, as follows:\n")
             print("The <list> function lists all items of a given type.\nUsage: list\n       list <phoneme>\n       list <feature> <+/-/0>\n")
-            print("The <compare> function lists the similar features of two phonemes. \nUsage: compare <phoneme1> <phomeme2>\n")
+            print("The <compare> function lists the similar features of any amount of phonemes. \nUsage: compare <phoneme1> <phomeme2> ...\n")
             print("The <contrast> function lists the different features of two phonemes. \nUsage: contrast <phoneme1> <phomeme2>\n")
             print("The <end> function terminates the program.\nUsage: end")
             print("- - - - - - - - -")
