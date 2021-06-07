@@ -196,6 +196,7 @@ def main() :
             else : 
                 print("Usage: list\n       list <phoneme>\n       list <feature> <+/-/0>")
         elif cmd[0] in ["compare", "com"] :
+            '''
             if len(cmd) == 3 :
                 if cmd[1] in data and cmd[2] in data : 
                     compare_dict = {}
@@ -211,6 +212,28 @@ def main() :
                     print("Usage: compare <phoneme1> <phomeme2>")
             else : 
                 print("Usage: compare <phoneme1> <phomeme2>")
+            '''
+            if len(cmd) > 1 :
+                for phone in cmd[1:] :
+                    if phone not in data :
+                        print("Phonemes not found or invalid.")
+                        print("Usage: compare <phoneme1> <phomeme2> ...")
+                        break
+                else :
+                    compare_dict = {}
+                    for entry in data[cmd[1]] :
+                        for phone in cmd[2:] :
+                            if data[cmd[1]][entry] != data[phone][entry] :
+                                break
+                        else :
+                            compare_dict[entry] = data[cmd[1]][entry]
+                    if len(compare_dict) == 0 :
+                        print("No similarities were found.")
+                    else :
+                        dict_print(compare_dict)
+            else :
+                print("Usage: compare <phoneme1> <phomeme2> ...")
+                
         elif cmd[0] in ["contrast", "con"] :
             if len(cmd) == 3 :
                 if cmd[1] in data and cmd[2] in data : 
